@@ -17,7 +17,7 @@ namespace OneMarket
         public static string CurrentPricesJsonLogsPath;
         public static int RepeatedHttpRequestFlag = 1;
     }
-    public class MarketCurrentPirces
+    public class MarketCurrentPrices
     {
         // Current Prices property list
         public string item_id { get; set; }
@@ -35,20 +35,12 @@ namespace OneMarket
         // Perform Json parising
         public static void ParseMarketCurrentPrices(string ResponseBody, string RequestId)
         {
-            // Store Log of Json responses
-            if (GlobalVariables.RepeatedHttpRequestFlag == 1) {
-                // User StreamWriter in true mode to append data
-                using (StreamWriter CurrentPricesJsonLogsWrite = new StreamWriter(GlobalVariables.CurrentPricesJsonLogsPath, true))
-                {
-                    CurrentPricesJsonLogsWrite.WriteLine($"{RequestId}: {ResponseBody}");
-                }
-            }
             // Declare a list to store multiple instances of MarketCurrentPrices class
             // Number of instances is defined by the size of given JSON array []
             // Console.WriteLine(ResponseBody);
-            List<MarketCurrentPirces> MarketCurrentPircesJsonList = JsonConvert.DeserializeObject<List<MarketCurrentPirces>>(ResponseBody);
+            List<MarketCurrentPrices> MarketCurrentPircesJsonList = JsonConvert.DeserializeObject<List<MarketCurrentPrices>>(ResponseBody);
             // Print out every instance of the class stored in the created list
-            foreach(MarketCurrentPirces RequestedObjectDetails in MarketCurrentPircesJsonList)
+            foreach(MarketCurrentPrices RequestedObjectDetails in MarketCurrentPircesJsonList)
             {
                 /* 
                  * Required request parameters (Prices):
@@ -69,7 +61,6 @@ namespace OneMarket
                     $"Transaction date: {RequestedObjectDetails.buy_price_max_date}");
             }
         }
-
     }
 
     internal static class MainMarket

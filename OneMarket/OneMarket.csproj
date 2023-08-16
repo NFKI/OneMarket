@@ -83,6 +83,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AlbionMarketCurrentPrices\AlbionMarketCurrentPrices.csproj">
+      <Project>{c416da37-8a04-4acc-a3aa-b9b76af9f43a}</Project>
+      <Name>AlbionMarketCurrentPrices</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -114,7 +114,7 @@ namespace OneMarket
 
                             }
                         }
-                        MarketCurrentPirces.ParseMarketCurrentPrices(RepeatedJsonAnswer, RequestId);    // Start parsing log data, save resources of server
+                        MarketCurrentPrices.ParseMarketCurrentPrices(RepeatedJsonAnswer, RequestId);    // Start parsing log data, save resources of server
                         GlobalVariables.RepeatedHttpRequestFlag = 1;
                         Console.WriteLine("Test");
                         break;
@@ -146,8 +146,13 @@ namespace OneMarket
                                     response.EnsureSuccessStatusCode();
                                     // Extract response content
                                     string ResponseBody = await response.Content.ReadAsStringAsync();
+                                    // Store Log of Json responses
+                                    using (StreamWriter CurrentPricesJsonLogsWrite = new StreamWriter(GlobalVariables.CurrentPricesJsonLogsPath, true))
+                                    {
+                                        CurrentPricesJsonLogsWrite.WriteLine($"{RequestId}: {ResponseBody}");  // User StreamWriter in true mode to append data
+                                    }
                                     // Parse received Json data
-                                    MarketCurrentPirces.ParseMarketCurrentPrices(ResponseBody, RequestId);
+                                    MarketCurrentPrices.ParseMarketCurrentPrices(ResponseBody, RequestId);
                                 }
                                 catch (HttpRequestException ex)
                                 {
