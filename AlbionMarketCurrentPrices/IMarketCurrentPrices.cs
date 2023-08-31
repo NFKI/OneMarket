@@ -3,6 +3,7 @@ namespace AlbionMarketCurrentPrices
 {
     public interface IMarketCurrentPrices
     {
-        void ParseMarketCurrentPrices(string ResponseBody, string RequestId);
+        void ParseMarketCurrentPrices(string ResponseBody);
+        void ExtractRepeatedJsonAnswerForCurrentPrices(string RepeatedHttpRequestId, string CurrentPricesJsonLogsPath);
     }
 }

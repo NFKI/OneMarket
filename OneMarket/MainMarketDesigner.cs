@@ -53,7 +53,6 @@ namespace OneMarket
         {
             string RequestId = "";  // Unique ID generated with each log save, is required to identify a sertain log in a .txt file
             string RepeatedHttpRequestId = "";  // Extracted Http request unique ID from log file
-            string RepeatedJsonAnswer = ""; // Storage for repeated Json answer from log file
 
             // No need to waste timer resources, init timer by first request
             if (!ClearAppHistory.Enabled)
@@ -100,29 +99,14 @@ namespace OneMarket
                 {
                     // Repeated request detected in Log files
                     case 0:
-                        // Search for Json answer in log by unique ID
-                        using (StreamReader CurrentPricesJsonLogsRead = new StreamReader(GlobalVariables.CurrentPricesJsonLogsPath))
-                        {
-                            string CurrentPricesJsonLogsReadLine;
-                            while ((CurrentPricesJsonLogsReadLine = CurrentPricesJsonLogsRead.ReadLine()) != null)
-                            {
-                                // If unique ID was detected
-                                if (CurrentPricesJsonLogsReadLine.StartsWith($"{RepeatedHttpRequestId}: "))
-                                {
-                                    int ColonIndex = CurrentPricesJsonLogsReadLine.IndexOf(':');    // Détect separating symbol
-                                    RepeatedJsonAnswer = CurrentPricesJsonLogsReadLine.Substring(ColonIndex + 1);   // Extract data after free space
-                                    break;
-                                }
-
-                                // TODO - same ID or mistake detected
-
-                            }
-                        }
-                        // Use AlbionMarketCurrentPrices dll to parse Json data
+                        
+                        // Use AlbionMarketCurrentPrices dll to extract and parse Json data
                         LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
-                        LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(RepeatedJsonAnswer, RequestId);
+                        LocalInstanceOfMarketCurrentPricesComponent.ExtractRepeatedJsonAnswerForCurrentPrices(RepeatedHttpRequestId, GlobalVariables.CurrentPricesJsonLogsPath);
                         GlobalVariables.RepeatedHttpRequestFlag = 1;
+                        Console.WriteLine("LOG");
                         break;
+
                     // Repeated request was not detected, new query
                     case 1:
 
@@ -158,7 +142,8 @@ namespace OneMarket
                                     }
                                     // Use AlbionMarketCurrentPrices dll to parse Json data
                                     LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
-                                    LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(ResponseBody, RequestId);
+                                    LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(ResponseBody);
+                                    Console.WriteLine("HTTP");
                                 }
                                 catch (HttpRequestException ex)
                                 {

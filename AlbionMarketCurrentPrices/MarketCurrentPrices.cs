@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace AlbionMarketCurrentPrices
@@ -19,7 +20,7 @@ namespace AlbionMarketCurrentPrices
         public int buy_price_max { get; set; }
         public DateTime buy_price_max_date { get; set; }
 
-        public void ParseMarketCurrentPrices(string ResponseBody, string RequestId)
+        public void ParseMarketCurrentPrices(string ResponseBody)
         {
             // Declare a list to store multiple instances of MarketCurrentPrices class
             // Number of instances is defined by the size of given JSON array []
@@ -47,5 +48,31 @@ namespace AlbionMarketCurrentPrices
                     $"Transaction date: {RequestedObjectDetails.buy_price_max_date}");
             }
         }
+
+        public void ExtractRepeatedJsonAnswerForCurrentPrices(string RepeatedHttpRequestId, string CurrentPricesJsonLogsPath)
+        {
+            string RepeatedJsonAnswer = ""; // Storage for repeated Json answer from log file
+
+            using (StreamReader CurrentPricesJsonLogsRead = new StreamReader(CurrentPricesJsonLogsPath))
+            {
+                string CurrentPricesJsonLogsReadLine;
+                while ((CurrentPricesJsonLogsReadLine = CurrentPricesJsonLogsRead.ReadLine()) != null)
+                {
+                    // If unique ID was detected
+                    if (CurrentPricesJsonLogsReadLine.StartsWith($"{RepeatedHttpRequestId}: "))
+                    {
+                        int ColonIndex = CurrentPricesJsonLogsReadLine.IndexOf(':');    // Détect separating symbol
+                        RepeatedJsonAnswer = CurrentPricesJsonLogsReadLine.Substring(ColonIndex + 1);   // Extract data after free space
+                        break;
+                    }
+
+                    // TODO - same ID or mistake detected
+
+                }
+            }
+            // Use AlbionMarketCurrentPrices dll to parse Json data
+            ParseMarketCurrentPrices(RepeatedJsonAnswer);
+        }
+
     }
 }
