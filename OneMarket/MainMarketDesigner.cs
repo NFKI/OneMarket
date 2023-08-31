@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Net.Http;  // Makes posible to perform Http requests
 using System.Net.Http.Headers;  // Provides Http related headers
+using AlbionMarketCurrentPrices;    // Market current prices component dll
 
 namespace OneMarket
 {
@@ -15,6 +16,9 @@ namespace OneMarket
         {
             InitializeComponent();  // Form application config setup
         }
+
+        // Define AP for AlbionMarketCurrentPrices component
+        private IMarketCurrentPrices LocalInstanceOfMarketCurrentPricesComponent;
 
         // API Endpoint Rate Limits:
         // 180 per 1 minute
@@ -63,7 +67,7 @@ namespace OneMarket
                 // Provide Http request URL <-- West server, prices, json format
                 string TestFullUrl = (string)(GlobalVariables.AlbionOnlineWestServerHost +
                                               GlobalVariables.ApiRequestEntryPoint +
-                                              "/stats/prices/T3_BAG,T5_BAG?locations=Caerleon,Bridgewatch&qualities=2");
+                                              "/stats/prices/T1_BAG,T7_BAG?locations=Caerleon,Bridgewatch&qualities=2");
                 // Check existance of the sertain API request subject Log file
                 // Some logs were already saved, check for repeated requests not to overflow server
                 if (File.Exists(GlobalVariables.CurrentPricesLogsPath))
@@ -114,9 +118,10 @@ namespace OneMarket
 
                             }
                         }
-                        MarketCurrentPrices.ParseMarketCurrentPrices(RepeatedJsonAnswer, RequestId);    // Start parsing log data, save resources of server
+                        // Use AlbionMarketCurrentPrices dll to parse Json data
+                        LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
+                        LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(RepeatedJsonAnswer, RequestId);
                         GlobalVariables.RepeatedHttpRequestFlag = 1;
-                        Console.WriteLine("Test");
                         break;
                     // Repeated request was not detected, new query
                     case 1:
@@ -151,8 +156,9 @@ namespace OneMarket
                                     {
                                         CurrentPricesJsonLogsWrite.WriteLine($"{RequestId}: {ResponseBody}");  // User StreamWriter in true mode to append data
                                     }
-                                    // Parse received Json data
-                                    MarketCurrentPrices.ParseMarketCurrentPrices(ResponseBody, RequestId);
+                                    // Use AlbionMarketCurrentPrices dll to parse Json data
+                                    LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
+                                    LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(ResponseBody, RequestId);
                                 }
                                 catch (HttpRequestException ex)
                                 {

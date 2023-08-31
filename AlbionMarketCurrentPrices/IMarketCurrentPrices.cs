@@ -1,7 +1,7 @@
 ﻿
 namespace AlbionMarketCurrentPrices
 {
-    internal interface IMarketCurrentPrices
+    public interface IMarketCurrentPrices
     {
         void ParseMarketCurrentPrices(string ResponseBody, string RequestId);
     }
