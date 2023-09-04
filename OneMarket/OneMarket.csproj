@@ -84,6 +84,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AlbionDataProjectHttpRequest\AlbionDataProjectHttpRequest.csproj">
+      <Project>{029a346d-2284-41b2-82d7-a7a553894950}</Project>
+      <Name>AlbionDataProjectHttpRequest</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AlbionMarketCurrentPrices\AlbionMarketCurrentPrices.csproj">
       <Project>{c416da37-8a04-4acc-a3aa-b9b76af9f43a}</Project>
       <Name>AlbionMarketCurrentPrices</Name>
