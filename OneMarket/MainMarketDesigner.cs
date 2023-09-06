@@ -82,7 +82,6 @@ namespace OneMarket
             else
             {
                 // If it is a first request and first log app should create related folders and file to store them
-                Directory.CreateDirectory(GlobalVariables.LogsFolderPath);
                 File.Create(GlobalVariables.CurrentPricesLogsPath).Dispose();   // Release resources related to File stream by .Dispose()
                 File.Create(GlobalVariables.CurrentPricesJsonLogsPath).Dispose();
             }
@@ -91,11 +90,18 @@ namespace OneMarket
                 // Repeated request detected in Log files
                 case 0:
 
-                    // Use AlbionMarketCurrentPrices dll to extract and parse Json data
-                    LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
-                    LocalInstanceOfMarketCurrentPricesComponent.ExtractRepeatedJsonAnswerForCurrentPrices(RepeatedHttpRequestId, GlobalVariables.CurrentPricesJsonLogsPath);
+                    try
+                    {
+                        // Use AlbionMarketCurrentPrices dll to extract and parse Json data
+                        LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
+                        LocalInstanceOfMarketCurrentPricesComponent.ExtractRepeatedJsonAnswerForCurrentPrices(RepeatedHttpRequestId, GlobalVariables.CurrentPricesJsonLogsPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
                     GlobalVariables.RepeatedHttpRequestFlag = 1;
-                    Console.WriteLine("LOG");
+                    // Console.WriteLine("LOG");
                     break;
 
                 // Repeated request was not detected, new query
@@ -104,15 +110,17 @@ namespace OneMarket
                     // Use AlbionDataProjectHttpRequest to perform Http request
                     LocalInstanceOfDataProjectHttpRequestComponent = new DataProjectHttpRequest();
                     ResponseBody = await LocalInstanceOfDataProjectHttpRequestComponent.PerformAlbionDataProjectHttpRequest(TestFullUrl, GlobalVariables.CurrentPricesLogsPath, GlobalVariables.CurrentPricesJsonLogsPath);
-                    if (ResponseBody == null)
+                    try
                     {
-                        Console.WriteLine("Response body is null");
-                        break;
+                        // Use AlbionMarketCurrentPrices dll to parse Json data
+                        LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
+                        LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(ResponseBody);
                     }
-                    // Use AlbionMarketCurrentPrices dll to parse Json data
-                    LocalInstanceOfMarketCurrentPricesComponent = new MarketCurrentPrices();
-                    LocalInstanceOfMarketCurrentPricesComponent.ParseMarketCurrentPrices(ResponseBody);
-                    Console.WriteLine("HTTP");
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    // Console.WriteLine("HTTP");
                     break;
             }
         }

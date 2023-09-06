@@ -25,7 +25,6 @@ namespace AlbionMarketCurrentPrices
         {
             // Declare a list to store multiple instances of MarketCurrentPrices class
             // Number of instances is defined by the size of given JSON array []
-            // Console.WriteLine(ResponseBody);
             List<MarketCurrentPrices> MarketCurrentPircesJsonList = JsonConvert.DeserializeObject<List<MarketCurrentPrices>>(ResponseBody);
             // Print out every instance of the class stored in the created list
             foreach (MarketCurrentPrices RequestedObjectDetails in MarketCurrentPircesJsonList)
